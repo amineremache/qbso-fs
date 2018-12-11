@@ -1,6 +1,5 @@
-from abstract.solution import Solution
+from fs_data import FSData
 
-class FSSolution(Solution):
-    
-    def __init__(self):
-        pass
+if __name__=="__main__":
+    instance = FSData()
+    instance.run()
