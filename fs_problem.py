@@ -4,12 +4,15 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 
+
 class FsProblem :
-    def __init__(self,data):
+    def __init__(self,data,qlearn):
         self.data=data
-        self.nbrAttributs= len(self.data.columns)-1 
-        self.outPuts=self.data.iloc[:,self.nbrAttributs]
-   
+        self.nb_attribs= len(self.data.columns)-1 
+        self.outPuts=self.data.iloc[:,self.nb_attribs]
+        self.ql = qlearn
+        self.nb_actions = len(self.ql.actions)
+
    
     def evaluate(self,solution):
         list=[i for i, n in enumerate(solution) if n == 1]
@@ -19,9 +22,9 @@ class FsProblem :
         
         
         array=df.values
-        nbrAttributs =len(array[0])
+        nb_attribs =len(array[0])
         
-        X = array[:,0:nbrAttributs]
+        X = array[:,0:nb_attribs]
         Y = self.outPuts
         train_X, test_X, train_y, test_y = train_test_split(X, Y, 
                                                     random_state=0,

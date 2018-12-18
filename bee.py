@@ -1,16 +1,18 @@
 import random
+from rl import QLearning
 
 class Bee :
-    def __init__(self,id,data,locIterations):
+    def __init__(self,id,problem,locIterations):
         self.id=id
-        self.data=data
+        self.data=problem
         self.solution=[]
-        self.fitness=0.0
+        self.fitness= 0.0
         self.locIterations=locIterations
+        self.action = []
     
     def localSearch(self):
         best=self.fitness
-        done=False
+        #done=False
         lista=[j for j, n in enumerate(self.solution) if n == 1]
         indice =lista[0]
         
@@ -44,7 +46,36 @@ class Bee :
                 if (quality<best):
                     self.solution[i]= (self.solution[i] + 1) % 2
                     self.fitness = oldFitness
-        
+
+
+    def ql_localSearch(self):
+        state = self.solution
+        action = self.data.ql.get_action(state)
+
+        if not self.data.ql.str_state(state) in self.data.ql.q_table[self.data.ql.nbrUn(state)]:
+            self.data.ql.q_table[self.data.ql.nbrUn(state)][self.data.ql.str_state(state)] = {self.data.ql.str_state(state):{}}
+
+        self.data.ql.learn(state,action,self.data.ql.q_table[self.data.ql.nbrUn(state)][self.data.ql.str_state(state)][str(action)],self.data.ql.get_next_state(state,action))
+        self.fitness = self.data.ql.get_q_value(state,action)
+
+        """state = self.solution
+        best_action = self.data.action_space[0]
+        best_fitness = self.fitness
+
+        for to_flip in self.data.action_space:
+            state[to_flip]= (state[to_flip] + 1) % 2
+            fitness = self.data.evaluate(state)
+            
+            action = self.data.ql.get_action(state)
+
+            if fitness > best_fitness:
+                best_fitness = fitness
+                best_action = to_flip
+                qtable_index = nbrUn(state)
+                qtable_state = self.str_state(state)
+                self.data.ql.q_table[qtable_index][qtable_state] = fitness
+
+        self.fitness = best_fitness"""
         
     def setSolution(self,solution):
         self.solution=solution

@@ -3,8 +3,8 @@ import random, copy
 
 
 class Swarm :
-    def __init__(self,data,flip,maxChance,nbrBees,maxIterations,locIterations):
-        self.data=data
+    def __init__(self,problem,flip,maxChance,nbrBees,maxIterations,locIterations):
+        self.data=problem
         self.flip=flip
         self.maxChance=maxChance
         self.nbChance=maxChance
@@ -13,7 +13,7 @@ class Swarm :
         self.locIterations=locIterations
         self.beeList=[]
         self.refSolution = Bee(-1,self.data,self.locIterations)
-        self.refSolution.setSolution(self.refSolution.Rand(0,1,data.nbrAttributs))
+        self.refSolution.setSolution(self.refSolution.Rand(0,1,self.data.nb_attribs))
         self.bestSolution = self.refSolution
         self.tabou=[]
 
@@ -23,7 +23,7 @@ class Swarm :
         
         self.beeList=[]
         while((i<self.nbrBees) and (i < self.flip) ) :
-            print ("first")
+            print ("First method to generate")
             
             solution=self.refSolution.solution
             k=0
@@ -40,13 +40,12 @@ class Swarm :
         h=0
         
         while((i<self.nbrBees) and (i< 2*self.flip )):
-            print("second")
-            
+            print("Second method to generate")
 
             solution=self.refSolution.solution
             k=0
             while((k<int(len(solution)/self.flip)) and (self.flip*k+h < len(solution))):
-                solution[int(self.data.nbrAttributs/self.flip)*h+k] = ((solution[int(self.data.nbrAttributs/self.flip)*h+k]+1)%2)
+                solution[int(self.data.nb_attribs/self.flip)*h+k] = ((solution[int(self.data.nb_attribs/self.flip)*h+k]+1)%2)
                 k+=1
             newBee=Bee(i,self.data,self.locIterations)
             newBee.solution = copy.deepcopy(solution)
@@ -57,7 +56,7 @@ class Swarm :
             i+=1
             h=h+1
         while (i<self.nbrBees):
-            print("alea")
+            print("Random method to generate")
             solution= self.refSolution.solution
             indice = random.randint(0,len(solution)-1)
             solution[indice]=((solution[indice]+1) % 2)
@@ -66,16 +65,13 @@ class Swarm :
             self.beeList.append(newBee)
             i+=1
         for bee in (self.beeList):
-            print("here")
+            
+            print("Printing all the solutions")
             lista=[j for j, n in enumerate(bee.solution) if n == 1]
             if (len(lista)== 0):
                 
-                bee.setSolution(bee.Rand(0,1,self.data.nbrAttributs))
+                bee.setSolution(bee.Rand(0,1,self.data.nb_attribs))
                 
-
-            
-
-
     def selectRefSol(self):
         self.beeList.sort(key=lambda Bee: Bee.fitness, reverse=True)
         bestQuality=self.beeList[0].fitness
@@ -91,11 +87,12 @@ class Swarm :
                 self.nbChance-=1
                 if(self.nbChance > 0): return self.bestBeeQuality()
                 else :return self.bestBeeDiversity()
+    
     def distanceTabou(self,bee):
-        distanceMin=self.data.nbrAttributs
+        distanceMin=self.data.nb_attribs
         for i in range(len(self.tabou)):
             cpt=0
-            for j in range(self.data.nbrAttributs):
+            for j in range(self.data.nb_attribs):
                 if (bee.solution[j] != self.tabou[i].solution[j]) :
                       cpt +=1
             if (cpt<=1) :
@@ -124,7 +121,7 @@ class Swarm :
             if(pos!=-1) :
                 return self.beeList[pos]
         bee= Bee(-1,self.data,self.locIterations)
-        bee.setSolution(bee.Rand(0,1,self.data.nbrAttributs))
+        bee.setSolution(bee.Rand(0,1,self.data.nb_attribs))
         return bee
             
     def bestBeeDiversity(self):
@@ -134,12 +131,13 @@ class Swarm :
                 max = self.distanceTabou(self.beeList[i])
         if (max==0):
             bee= Bee(-1,self.data,self.locIterations)
-            bee.setSolution(bee.Rand(0,1,self.data.nbrAttributs))
+            bee.setSolution(bee.Rand(0,1,self.data.nb_attribs))
             return bee
         i=0
         while(i<len(self.beeList) and self.distanceTabou(self.beeList[i])!= max) :
             i+=1
         return self.beeList[i]
+    
     def bso(self):
         i=0
         while(i<self.maxIterations):
@@ -158,7 +156,8 @@ class Swarm :
             #La recherche locale
             
             for j in range(self.nbrBees):
-                self.beeList[j].localSearch()
+                #self.beeList[j].localSearch()
+                self.beeList[j].ql_localSearch()
                 #print("fitness de : ")
                 print(self.beeList[j].fitness)
             self.refSolution=self.selectRefSol()
