@@ -49,14 +49,16 @@ class Bee :
 
 
     def ql_localSearch(self):
-        state = self.solution
-        action = self.data.ql.get_action(state)
+        
+        for itr in range(self.locIterations):
+            state = self.solution
+            action = self.data.ql.get_action(self.data,state)
 
-        if not self.data.ql.str_state(state) in self.data.ql.q_table[self.data.ql.nbrUn(state)]:
-            self.data.ql.q_table[self.data.ql.nbrUn(state)][self.data.ql.str_state(state)] = {self.data.ql.str_state(state):{}}
+            if not self.data.ql.str_state(state) in self.data.ql.q_table[self.data.ql.nbrUn(state)]:
+                self.data.ql.q_table[self.data.ql.nbrUn(state)][self.data.ql.str_state(state)] = {self.data.ql.str_state(state):{}}
 
-        self.data.ql.learn(state,action,self.data.ql.q_table[self.data.ql.nbrUn(state)][self.data.ql.str_state(state)][str(action)],self.data.ql.get_next_state(state,action))
-        self.fitness = self.data.ql.get_q_value(state,action)
+            self.data.ql.learn(self.data,state,action,self.data.evaluate(state),self.data.ql.get_next_state(state,action))
+            self.fitness = self.data.ql.get_q_value(state,action)
 
         """state = self.solution
         best_action = self.data.action_space[0]

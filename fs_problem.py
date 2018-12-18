@@ -13,7 +13,6 @@ class FsProblem :
         self.ql = qlearn
         self.nb_actions = len(self.ql.actions)
 
-   
     def evaluate(self,solution):
         list=[i for i, n in enumerate(solution) if n == 1]
         if (len(list)== 0):

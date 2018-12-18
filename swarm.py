@@ -34,7 +34,6 @@ class Swarm :
             newBee.solution = copy.deepcopy(solution)
             self.beeList.append(newBee)
             
-                
             i+=1
             h=h+1
         h=0
@@ -51,8 +50,6 @@ class Swarm :
             newBee.solution = copy.deepcopy(solution)
             self.beeList.append(newBee)
             
-                
-
             i+=1
             h=h+1
         while (i<self.nbrBees):
@@ -65,11 +62,8 @@ class Swarm :
             self.beeList.append(newBee)
             i+=1
         for bee in (self.beeList):
-            
-            print("Printing all the solutions")
             lista=[j for j, n in enumerate(bee.solution) if n == 1]
             if (len(lista)== 0):
-                
                 bee.setSolution(bee.Rand(0,1,self.data.nb_attribs))
                 
     def selectRefSol(self):
@@ -86,7 +80,8 @@ class Swarm :
             else:
                 self.nbChance-=1
                 if(self.nbChance > 0): return self.bestBeeQuality()
-                else :return self.bestBeeDiversity()
+                else :
+                    return self.bestBeeDiversity()
     
     def distanceTabou(self,bee):
         distanceMin=self.data.nb_attribs
@@ -158,8 +153,7 @@ class Swarm :
             for j in range(self.nbrBees):
                 #self.beeList[j].localSearch()
                 self.beeList[j].ql_localSearch()
-                #print("fitness de : ")
-                print(self.beeList[j].fitness)
+                print( "fitness of bee " + str(j) + " " + str(self.beeList[j].fitness) )
             self.refSolution=self.selectRefSol()
             i+=1
         

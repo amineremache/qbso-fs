@@ -16,12 +16,12 @@ class FSData():
     
     def attributs_to_flip(self,dataset):
 
-        return [0,2,7]
+        return list(range(3))
     
     def run(self):
         
         for filename in self.files:
-            if(filename=='.\\Benchmarks\\sonar.csv'):
+            if(filename=='.\\Benchmarks\\iris.csv'):
                 print(filename)
                 df=pd.read_csv(filename,header=None)
                 
