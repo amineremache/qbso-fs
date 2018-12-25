@@ -7,6 +7,7 @@ class Bee :
         self.data=problem
         self.solution=[]
         self.fitness= 0.0
+        self.reward = 0.0
         self.locIterations=locIterations
         self.action = []
     
@@ -22,7 +23,7 @@ class Bee :
                 oldFitness=self.fitness
                 for i in range(len(self.solution)):
                     
-                    if ((len(lista)==1) and (indice==i)and (i < self.data.nbrAttributs-1)):
+                    if ((len(lista)==1) and (indice==i)and (i < self.data.nb_attribs-1)):
                         i+=1
                     self.solution[i]= (self.solution[i] + 1) % 2
                     
@@ -39,7 +40,7 @@ class Bee :
                     break
             for i in range(len(self.solution)):
                 oldFitness=self.fitness
-                if ((len(lista)==1) and (indice==i) and (i < self.data.nbrAttributs-1)):
+                if ((len(lista)==1) and (indice==i) and (i < self.data.nb_attribs-1)):
                     i+=1
                 self.solution[i]= (self.solution[i] + 1) % 2
                 quality = self.data.evaluate(self.solution)
@@ -50,35 +51,30 @@ class Bee :
 
     def ql_localSearch(self):
         
-        for itr in range(self.locIterations):
+          for itr in range(self.locIterations):
             state = self.solution
-            action = self.data.ql.get_action(self.data,state)
+            self.fitness = self.data.evaluate(state)
 
-            if not self.data.ql.str_state(state) in self.data.ql.q_table[self.data.ql.nbrUn(state)]:
-                self.data.ql.q_table[self.data.ql.nbrUn(state)][self.data.ql.str_state(state)] = {self.data.ql.str_state(state):{}}
+            if not self.data.ql.str_sol(state) in self.data.ql.q_table[self.data.ql.nbrUn(state)]:
+                self.data.ql.q_table[self.data.ql.nbrUn(state)][self.data.ql.str_sol(state)] = {self.data.ql.str_sol(state):{}}
 
-            self.data.ql.learn(self.data,state,action,self.data.evaluate(state),self.data.ql.get_next_state(state,action))
-            self.fitness = self.data.ql.get_q_value(state,action)
+            action = self.data.ql.step(self.data,state)
+            next_state = self.data.ql.get_next_state(state,action)
+            accur_ns = self.data.evaluate(next_state)
 
-        """state = self.solution
-        best_action = self.data.action_space[0]
-        best_fitness = self.fitness
-
-        for to_flip in self.data.action_space:
-            state[to_flip]= (state[to_flip] + 1) % 2
-            fitness = self.data.evaluate(state)
+            """if (accur_ns > self.fitness):
+                self.reward = 100
+            elif (accur_ns < self.fitness):
+                self.reward = 10
+            else: 
+                self.reward = 1"""
             
-            action = self.data.ql.get_action(state)
+            #self.reward = accur_ns - self.fitness
 
-            if fitness > best_fitness:
-                best_fitness = fitness
-                best_action = to_flip
-                qtable_index = nbrUn(state)
-                qtable_state = self.str_state(state)
-                self.data.ql.q_table[qtable_index][qtable_state] = fitness
+            self.data.ql.learn(self.data,state,action,self.fitness,next_state)
+            self.solution = next_state.copy()
 
-        self.fitness = best_fitness"""
-        
+       
     def setSolution(self,solution):
         self.solution=solution
         self.fitness=self.data.evaluate(solution)

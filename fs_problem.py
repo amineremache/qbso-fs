@@ -12,6 +12,7 @@ class FsProblem :
         self.outPuts=self.data.iloc[:,self.nb_attribs]
         self.ql = qlearn
         self.nb_actions = len(self.ql.actions)
+        self.classifier = KNeighborsClassifier(n_neighbors=3)
 
     def evaluate(self,solution):
         list=[i for i, n in enumerate(solution) if n == 1]
@@ -29,15 +30,15 @@ class FsProblem :
                                                     random_state=0,
                                                     test_size=0.3
                                                     )
-        classifier = KNeighborsClassifier(n_neighbors=3)
+        
         """
         sc_X = StandardScaler()
         train_X = sc_X.fit_transform(train_X)
         test_X = sc_X.transform(test_X)
-        classifier= SVC(random_state=0, kernel='rbf')  
+        self.classifier= SVC(random_state=0, kernel='rbf')  
         """
-        classifier.fit(train_X,train_y)
-        predict= classifier.predict(test_X) 
+        self.classifier.fit(train_X,train_y)
+        predict= self.classifier.predict(test_X) 
         return metrics.accuracy_score(predict,test_y)
     
     def nbrUn(self,solution):

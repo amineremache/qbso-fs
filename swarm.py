@@ -74,12 +74,13 @@ class Swarm :
             self.nbChance=self.maxChance
             return self.bestSolution
         else:
-            if(  (len(self.tabou)!=0) and  bestQuality > (self.tabou[len(self.tabou )-1].fitness)  ):
+            if(  (len(self.tabou)!=0) and  bestQuality > (self.tabou[len(self.tabou)-1].fitness)  ):
                 self.nbChance=self.maxChance
                 return self.bestBeeQuality()
             else:
                 self.nbChance-=1
-                if(self.nbChance > 0): return self.bestBeeQuality()
+                if(self.nbChance > 0): 
+                    return self.bestBeeQuality()
                 else :
                     return self.bestBeeDiversity()
     
@@ -136,14 +137,14 @@ class Swarm :
     def bso(self):
         i=0
         while(i<self.maxIterations):
-            #print("la solution de référence est :")
+            print("La solution de référence est : ",self.refSolution.solution)
             #print(self.refSolution.solution)
             self.tabou.append(self.refSolution)
-            print(i)
+            print("Iteration N° : ",i)
             
             self.searchArea()
             print("********************************************************")
-            print("la zone de recherche est :")
+            print("La zone de recherche est :")
             for k in range (self.nbrBees): 
                 print(self.beeList[k].id)
                 print(self.beeList[k].solution)
@@ -151,11 +152,20 @@ class Swarm :
             #La recherche locale
             
             for j in range(self.nbrBees):
+                self.beeList[j].reward = 0
                 #self.beeList[j].localSearch()
                 self.beeList[j].ql_localSearch()
-                print( "fitness of bee " + str(j) + " " + str(self.beeList[j].fitness) )
+                print( "Fitness of bee " + str(j) + " " + str(self.beeList[j].fitness) )
             self.refSolution=self.selectRefSol()
             i+=1
         
-        print("la meilleure solution trouvé est :")
-        print(self.bestSolution.fitness)
+        print("La meilleure solution trouvé est : ",self.str_sol(self.bestSolution.solution))
+        print("Sa récompense est : ",self.bestSolution.reward)
+        print("Sa fitness est : ",self.bestSolution.fitness)
+
+    
+    def str_sol(self,mlist):
+        result = ''
+        for element in mlist:
+            result += str(element)
+        return result
