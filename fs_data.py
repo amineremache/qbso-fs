@@ -18,7 +18,7 @@ class FSData():
     
     def attributs_to_flip(self,dataset):
 
-        return list(range(8))
+        return list(range(9))
     
     def run(self):
 

@@ -1,5 +1,6 @@
 import random
 from rl import QLearning
+import numpy as np
 
 class Bee :
     def __init__(self,id,problem,locIterations):
@@ -51,38 +52,40 @@ class Bee :
 
     def ql_localSearch(self):
         
-          for itr in range(self.locIterations):
-            state = self.solution
-            self.fitness = self.data.evaluate(state)
+        print (self.data.ql.q_table)
+        #init_sol = self.solution.copy()
+        #for itr in range(self.locIterations):
+        for itr in range(6):
+            state = self.solution.copy()
 
-            if not self.data.ql.str_sol(state) in self.data.ql.q_table[self.data.ql.nbrUn(state)]:
-                self.data.ql.q_table[self.data.ql.nbrUn(state)][self.data.ql.str_sol(state)] = {self.data.ql.str_sol(state):{}}
+            """if not self.data.ql.str_sol(state) in self.data.ql.q_table[self.data.ql.nbrUn(state)]:
+                self.data.ql.q_table[self.data.ql.nbrUn(state)][self.data.ql.str_sol(state)] = {self.data.ql.str_sol(state):{}}"""
 
-            action = self.data.ql.step(self.data,state)
-            next_state = self.data.ql.get_next_state(state,action)
-            accur_ns = self.data.evaluate(next_state)
+            next_state, action, self.reward = self.data.ql.step(self.data,state)
 
-            """if (accur_ns > self.fitness):
+            """if (reward > self.fitness):
                 self.reward = 100
-            elif (accur_ns < self.fitness):
+            elif (reward < self.fitness):
                 self.reward = 10
             else: 
                 self.reward = 1"""
             
-            #self.reward = accur_ns - self.fitness
+            #self.reward = reward - self.fitness
 
-            self.data.ql.learn(self.data,state,action,self.fitness,next_state)
+            self.data.ql.learn(self.data,state,action,self.reward,next_state)
+            self.fitness = self.data.ql.get_q_value(self.data,self.solution,action)
             self.solution = next_state.copy()
+            
 
        
     def setSolution(self,solution):
         self.solution=solution
         self.fitness=self.data.evaluate(solution)
     
-    def Rand(self,start, end, num): 
+    def Rand(self,num): 
         res = [] 
-  
-        for j in range(num): 
-            res.append(random.randint(start, end)) 
+        """for j in range(num): 
+            res.append(random.randint(start, end))"""
+        res = np.random.choice([0,1],size=(num,),p=[3./10,7./10]).tolist()
   
         return res

@@ -13,7 +13,7 @@ class Swarm :
         self.locIterations=locIterations
         self.beeList=[]
         self.refSolution = Bee(-1,self.data,self.locIterations)
-        self.refSolution.setSolution(self.refSolution.Rand(0,1,self.data.nb_attribs))
+        self.refSolution.setSolution(self.refSolution.Rand(self.data.nb_attribs))
         self.bestSolution = self.refSolution
         self.tabou=[]
 
@@ -117,7 +117,7 @@ class Swarm :
             if(pos!=-1) :
                 return self.beeList[pos]
         bee= Bee(-1,self.data,self.locIterations)
-        bee.setSolution(bee.Rand(0,1,self.data.nb_attribs))
+        bee.setSolution(bee.Rand(self.data.nb_attribs))
         return bee
             
     def bestBeeDiversity(self):
@@ -127,7 +127,7 @@ class Swarm :
                 max = self.distanceTabou(self.beeList[i])
         if (max==0):
             bee= Bee(-1,self.data,self.locIterations)
-            bee.setSolution(bee.Rand(0,1,self.data.nb_attribs))
+            bee.setSolution(bee.Rand(self.data.nb_attribs))
             return bee
         i=0
         while(i<len(self.beeList) and self.distanceTabou(self.beeList[i])!= max) :
@@ -152,14 +152,15 @@ class Swarm :
             #La recherche locale
             
             for j in range(self.nbrBees):
-                self.beeList[j].reward = 0
                 #self.beeList[j].localSearch()
-                self.beeList[j].ql_localSearch()
+                for episode in range(5):
+                    self.beeList[j].reward = 0
+                    self.beeList[j].ql_localSearch()
                 print( "Fitness of bee " + str(j) + " " + str(self.beeList[j].fitness) )
             self.refSolution=self.selectRefSol()
             i+=1
         
-        print("La meilleure solution trouvé est : ",self.str_sol(self.bestSolution.solution))
+        print("La meilleure solution trouvé est : ",self.bestSolution.solution)
         print("Sa récompense est : ",self.bestSolution.reward)
         print("Sa fitness est : ",self.bestSolution.fitness)
 
