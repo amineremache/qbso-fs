@@ -71,9 +71,8 @@ class Bee :
                 self.reward = 1"""
             
             #self.reward = reward - self.fitness
-
+            self.fitness = self.data.ql.get_q_value(self.data,self.solution,action)[1] - self.data.evaluate(state) 
             self.data.ql.learn(self.data,state,action,self.reward,next_state)
-            self.fitness = self.data.ql.get_q_value(self.data,self.solution,action)
             self.solution = next_state.copy()
             
 

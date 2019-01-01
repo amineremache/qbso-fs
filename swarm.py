@@ -64,17 +64,17 @@ class Swarm :
         for bee in (self.beeList):
             lista=[j for j, n in enumerate(bee.solution) if n == 1]
             if (len(lista)== 0):
-                bee.setSolution(bee.Rand(0,1,self.data.nb_attribs))
+                bee.setSolution(bee.Rand(self.data.nb_attribs))
                 
     def selectRefSol(self):
-        self.beeList.sort(key=lambda Bee: Bee.fitness, reverse=True)
-        bestQuality=self.beeList[0].fitness
-        if(bestQuality>self.bestSolution.fitness):
+        self.beeList.sort(key=lambda Bee: Bee.reward, reverse=True)
+        bestQuality=self.beeList[0].reward
+        if(bestQuality>self.bestSolution.reward):
             self.bestSolution=self.beeList[0]
             self.nbChance=self.maxChance
             return self.bestSolution
         else:
-            if(  (len(self.tabou)!=0) and  bestQuality > (self.tabou[len(self.tabou)-1].fitness)  ):
+            if(  (len(self.tabou)!=0) and  bestQuality > (self.tabou[len(self.tabou)-1].reward)  ):
                 self.nbChance=self.maxChance
                 return self.bestBeeQuality()
             else:
@@ -102,7 +102,7 @@ class Swarm :
         i=0
         pos=-1
         while(i<self.nbrBees):
-            max=self.beeList[i].fitness
+            max=self.beeList[i].reward
             nbUn=self.data.nbrUn(self.beeList[i].solution)
             while((i<self.nbrBees) and (self.data.evaluate(self.beeList[i].solution)==max)):
                 distanceTemp=self.distanceTabou(self.beeList[i])
@@ -154,7 +154,6 @@ class Swarm :
             for j in range(self.nbrBees):
                 #self.beeList[j].localSearch()
                 for episode in range(5):
-                    self.beeList[j].reward = 0
                     self.beeList[j].ql_localSearch()
                 print( "Fitness of bee " + str(j) + " " + str(self.beeList[j].fitness) )
             self.refSolution=self.selectRefSol()

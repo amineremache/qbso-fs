@@ -15,8 +15,8 @@ class QLearning:
         arg_max = 0
         
         for i in actions_vals:
-            if self.get_q_value(data,state,i) >= max_val:
-                max_val = self.get_q_value(data,state,i)
+            if self.get_q_value(data,state,i)[1] >= max_val:
+                max_val = self.get_q_value(data,state,i)[1]
                 arg_max = i
         
         if max_val == 0:
@@ -32,12 +32,12 @@ class QLearning:
 
         if not str(action) in self.q_table[self.nbrUn(state)][self.str_sol(state)]:
             #self.q_table[self.nbrUn(state)][self.str_sol(state)][str(action)] = data.evaluate(self.get_next_state(state,action))
-            self.q_table[self.nbrUn(state)][self.str_sol(state)][str(action)] = 0
+            self.q_table[self.nbrUn(state)][self.str_sol(state)][str(action)] = [0,data.evaluate(self.get_next_state(state,action))]
             
         return self.q_table[self.nbrUn(state)][self.str_sol(state)][str(action)]
 
     def set_q_value(self,state,action,val):
-        self.q_table[self.nbrUn(state)][self.str_sol(state)][str(action)] = val
+        self.q_table[self.nbrUn(state)][self.str_sol(state)][str(action)][0] = val
 
     def step(self,data,state):
         if np.random.uniform() > self.epsilon :
@@ -58,7 +58,7 @@ class QLearning:
                 argmax_actions.append(ac)"""  
 
 
-                ac_state_q_val = self.get_q_value(data,state,ac)
+                ac_state_q_val = self.get_q_value(data,state,ac)[1]
                 if ( ac_state_q_val == self.get_max_value(data,state,action_values)[0] ):
                     #print("Q-value for action :" + str(ac) + " is " + str(ac_state_q_val))
                     argmax_actions.append(ac)
@@ -67,11 +67,11 @@ class QLearning:
             next_action = np.random.choice(argmax_actions) 
             next_state = self.get_next_state(state,next_action)
             #print("The next state is :",next_state)
-            reward = data.evaluate(next_state)
+            reward = self.get_q_value(data,state,next_action)[1]
         else :
             next_action = np.random.choice(self.actions)
             next_state = self.get_next_state(state,next_action)
-            reward = data.evaluate(next_state)
+            reward = self.get_q_value(data,state,next_action)[1]
         if self.epsilon > 0 :
             self.epsilon -= 0.00001 #Décrementer espsilon pour Arreter l'exploration aléatoire qu'on aura un politique optimale
         if self.epsilon < 0 :
@@ -89,8 +89,8 @@ class QLearning:
         print("current state : " + self.str_sol(current_state) + "| current action : " + str(current_action) + "| reward : "+ str(reward) + "| next state : "+ self.str_sol(next_state))
         
         next_action = self.step(data,next_state)[1]
-        new_q = reward + self.gamma * self.get_q_value(data,next_state,next_action)
-        self.set_q_value(current_state,current_action,(1 - self.alpha)*self.get_q_value(data,current_state,current_action) + self.alpha*new_q)  
+        new_q = reward + self.gamma * self.get_q_value(data,next_state,next_action)[0]
+        self.set_q_value(current_state,current_action,(1 - self.alpha)*self.get_q_value(data,current_state,current_action)[0] + self.alpha*new_q)  
 
     #@staticmethod
     def str_sol(self,mlist):

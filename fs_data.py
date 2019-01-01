@@ -10,7 +10,7 @@ class FSData():
         #url = "https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv"
         path = ".\\Benchmarks"
         self.files = glob.glob(os.path.join(path, "*.csv"))
-        self.filename = path +'\\glass.csv'
+        self.filename = path +'\\sonar.csv'
         self.df = pd.read_csv(self.filename,header=None)
         self.ql = QLearning(len(self.df.columns),self.attributs_to_flip(self.df))
         self.fsd = FsProblem(self.df,self.ql)
@@ -18,7 +18,7 @@ class FSData():
     
     def attributs_to_flip(self,dataset):
 
-        return list(range(9))
+        return list(range(60))
     
     def run(self):
 
