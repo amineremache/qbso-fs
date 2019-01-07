@@ -23,7 +23,7 @@ class Swarm :
         
         self.beeList=[]
         while((i<self.nbrBees) and (i < self.flip) ) :
-            print ("First method to generate")
+            #print ("First method to generate")
             
             solution=self.refSolution.solution
             k=0
@@ -39,7 +39,7 @@ class Swarm :
         h=0
         
         while((i<self.nbrBees) and (i< 2*self.flip )):
-            print("Second method to generate")
+            #print("Second method to generate")
 
             solution=self.refSolution.solution
             k=0
@@ -53,7 +53,7 @@ class Swarm :
             i+=1
             h=h+1
         while (i<self.nbrBees):
-            print("Random method to generate")
+            #print("Random method to generate")
             solution= self.refSolution.solution
             indice = random.randint(0,len(solution)-1)
             solution[indice]=((solution[indice]+1) % 2)
@@ -137,25 +137,25 @@ class Swarm :
     def bso(self):
         i=0
         while(i<self.maxIterations):
-            print("La solution de référence est : ",self.refSolution.solution)
+            #print("La solution de référence est : ",self.refSolution.solution)
             #print(self.refSolution.solution)
             self.tabou.append(self.refSolution)
-            print("Iteration N° : ",i)
+            #print("Iteration N° : ",i)
             
             self.searchArea()
-            print("********************************************************")
+            """print("********************************************************")
             print("La zone de recherche est :")
             for k in range (self.nbrBees): 
                 print(self.beeList[k].id)
                 print(self.beeList[k].solution)
-            print("*******************************************************")
+            print("*******************************************************")"""
             #La recherche locale
             
             for j in range(self.nbrBees):
                 #self.beeList[j].localSearch()
                 for episode in range(5):
                     self.beeList[j].ql_localSearch()
-                print( "Fitness of bee " + str(j) + " " + str(self.beeList[j].fitness) )
+                #print( "Fitness of bee " + str(j) + " " + str(self.beeList[j].fitness) )
             self.refSolution=self.selectRefSol()
             i+=1
         

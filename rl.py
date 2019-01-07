@@ -5,28 +5,23 @@ class QLearning:
     def __init__(self,nb_atts,actions):
         self.actions = actions
         self.alpha = 0.1 # Facteur d'apprentissage
-        self.gamma = 0.85  
+        self.gamma = 0.9  
         self.epsilon = 0.01
         self.q_table = [ {} for i in range(nb_atts) ] #defaultdict(lambda : [0.0,0.0,0.0,0.0])
 
     def get_max_value(self,data,state,actions_vals):
-        
         max_val = 0.0
         arg_max = 0
-        
         for i in actions_vals:
-            if self.get_q_value(data,state,i)[1] >= max_val:
+            if self.get_q_value(data,state,i)[0] >= max_val:
                 max_val = self.get_q_value(data,state,i)[1]
                 arg_max = i
-        
         if max_val == 0:
             arg_max = np.random.choice(actions_vals)
-
         return max_val,arg_max
 
 
     def get_q_value(self,data,state,action):
-        
         if not self.str_sol(state) in self.q_table[self.nbrUn(state)]:
             self.q_table[self.nbrUn(state)][self.str_sol(state)] = {}
 
@@ -86,10 +81,10 @@ class QLearning:
         return next_state
     
     def learn(self,data,current_state,current_action,reward,next_state):
-        print("current state : " + self.str_sol(current_state) + "| current action : " + str(current_action) + "| reward : "+ str(reward) + "| next state : "+ self.str_sol(next_state))
+        #print("current state : " + self.str_sol(current_state) + "| current action : " + str(current_action) + "| reward : "+ str(reward) + "| next state : "+ self.str_sol(next_state))
         
-        next_action = self.step(data,next_state)[1]
-        new_q = reward + self.gamma * self.get_q_value(data,next_state,next_action)[0]
+        next_action = self.step(data,next_state)[1] # step returns 3 values : next_state, next_action, and the reward
+        new_q = reward + self.gamma * self.get_q_value(data,next_state,next_action)[1]  #[0] is to pick q-value instead of [1] which is the accuracy of the new state 
         self.set_q_value(current_state,current_action,(1 - self.alpha)*self.get_q_value(data,current_state,current_action)[0] + self.alpha*new_q)  
 
     #@staticmethod

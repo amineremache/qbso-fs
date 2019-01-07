@@ -52,10 +52,10 @@ class Bee :
 
     def ql_localSearch(self):
         
-        print (self.data.ql.q_table)
+        #print (self.data.ql.q_table)
         #init_sol = self.solution.copy()
         #for itr in range(self.locIterations):
-        for itr in range(6):
+        for step in range(10):
             state = self.solution.copy()
 
             """if not self.data.ql.str_sol(state) in self.data.ql.q_table[self.data.ql.nbrUn(state)]:
@@ -71,11 +71,11 @@ class Bee :
                 self.reward = 1"""
             
             #self.reward = reward - self.fitness
-            self.fitness = self.data.ql.get_q_value(self.data,self.solution,action)[1] - self.data.evaluate(state) 
+            #self.fitness = self.data.ql.get_q_value(self.data,self.solution,action)[1] - self.data.evaluate(state) 
+            self.fitness = self.data.ql.get_q_value(self.data,state,action)[0]
             self.data.ql.learn(self.data,state,action,self.reward,next_state)
             self.solution = next_state.copy()
-            
-
+        
        
     def setSolution(self,solution):
         self.solution=solution
