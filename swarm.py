@@ -161,7 +161,7 @@ class Swarm :
         
         print("La meilleure solution trouvé est : ",self.bestSolution.solution)
         print("Sa récompense est : ",self.bestSolution.reward)
-        print("Sa fitness est : ",self.bestSolution.fitness)
+        print("Sa Q-value est : ",self.bestSolution.fitness)
 
     
     def str_sol(self,mlist):

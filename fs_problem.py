@@ -12,7 +12,7 @@ class FsProblem :
         self.outPuts=self.data.iloc[:,self.nb_attribs]
         self.ql = qlearn
         self.nb_actions = len(self.ql.actions)
-        self.classifier = KNeighborsClassifier(n_neighbors=1)
+        self.classifier = KNeighborsClassifier(n_neighbors=5)
 
     def evaluate(self,solution):
         list=[i for i, n in enumerate(solution) if n == 1]
@@ -28,7 +28,7 @@ class FsProblem :
         Y = self.outPuts
         train_X, test_X, train_y, test_y = train_test_split(X, Y, 
                                                     random_state=0,
-                                                    test_size=0.1
+                                                    test_size=0.3
                                                     )
         
         """
