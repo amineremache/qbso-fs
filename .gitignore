@@ -106,5 +106,9 @@ venv.bak/
 # vscode
 .vscode/
 
-# logs
+# archives
 logs/
+packages/
+
+# results
+results/

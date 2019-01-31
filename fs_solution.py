@@ -4,10 +4,22 @@ import sys, time
 
 if __name__=="__main__":
 
-    instance = FSData()
-    classifier_name = str(type(instance.fsd.classifier)).strip('< > \' class ').split('.')[3]
-    dataset_name = instance.filename.split('\\')[2].split('.')[0]
-    log_file = open('.\\logs\\'+ time.strftime("%d-%m-%Y_%H-%M_", time.localtime()) + dataset_name + '_' + classifier_name +'.txt','w+')
-    sys.stdout = stream_tee(sys.stdout, log_file)
-    #sys.stdout = log_file
-    instance.run()
+    # Prepare the dataset
+
+    dataset = "Glass"
+    #data_loc_path = "https://raw.githubusercontent.com/Neofly4023/bso-fs/master/datasets/"
+    data_loc_path = "./datasets/"
+    location = data_loc_path + dataset + ".csv"
+
+    # Params init
+
+    typeOfAlgo = 1
+    nbr_exec = 1
+    flip = 5
+    maxChance = 3
+    nbrBees = 10
+    maxIterations = 2
+    locIterations = 4
+
+    instance = FSData(location,nbr_exec)
+    instance.run(typeOfAlgo,flip,maxChance,nbrBees,maxIterations,locIterations)
