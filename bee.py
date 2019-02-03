@@ -1,12 +1,13 @@
 import random
 from rl import QLearning
 import numpy as np
+from solution import Solution
 
 class Bee :
-    def __init__(self,id,problem,locIterations):
+    def __init__(self,id,problem,locIterations,state):
         self.id=id
         self.data=problem
-        self.solution=[]
+        self.solution = Solution(self.data,state=state)
         self.fitness= 0.0
         self.reward = 0.0
         self.locIterations=locIterations
@@ -15,38 +16,38 @@ class Bee :
     def localSearch(self):
         best=self.fitness
         #done=False
-        lista=[j for j, n in enumerate(self.solution) if n == 1]
+        lista=[j for j, n in enumerate(self.solution.state) if n == 1]
         indice =lista[0]
         
         for itr in range(self.locIterations):
             while(True):
                 pos=-1
                 oldFitness=self.fitness
-                for i in range(len(self.solution)):
+                for i in range(len(self.solution.state)):
                     
                     if ((len(lista)==1) and (indice==i) and (i < self.data.nb_attribs-1)):
                         i+=1
-                    self.solution[i]= (self.solution[i] + 1) % 2
+                    self.solution.state[i]= (self.solution.state[i] + 1) % 2
                     
-                    quality = self.data.evaluate(self.solution)
+                    quality = self.solution.get_accuracy(self.solution.get_state())
                     if (quality >best):
                         pos = i
                         best=quality
-                    self.solution[i]= (self.solution[i]+1) % 2
+                    self.solution.state[i]= (self.solution.state[i]+1) % 2
                     self.fitness = oldFitness 
                 if (pos != -1):
-                    self.solution[pos]= (self.solution[pos]+1)%2
+                    self.solution.state[pos]= (self.solution.state[pos]+1)%2
                     self.fitness = best
                 else:
                     break
-            for i in range(len(self.solution)):
+            for i in range(len(self.solution.state)):
                 oldFitness=self.fitness
                 if ((len(lista)==1) and (indice==i) and (i < self.data.nb_attribs-1)):
                     i+=1
-                self.solution[i]= (self.solution[i] + 1) % 2
-                quality = self.data.evaluate(self.solution)
+                self.solution.state[i]= (self.solution.state[i] + 1) % 2
+                quality = self.solution.get_accuracy(self.solution.get_state())
                 if (quality<best):
-                    self.solution[i]= (self.solution[i] + 1) % 2
+                    self.solution.state[i]= (self.solution.state[i] + 1) % 2
                     self.fitness = oldFitness
 
 
@@ -55,33 +56,38 @@ class Bee :
         iterations = int(self.locIterations/maxIterIndex) if self.locIterations >= maxIterIndex else 1
         for itr in range(iterations):
        
-            state = self.solution.copy()
+            state = self.solution.get_state()
 
-            next_state, action = self.data.ql.step(self.data,state)
-            acc_state = self.data.evaluate(state)
-            acc_new_state = self.data.evaluate(next_state)
+            next_state, action = self.data.ql.step(self.data,self.solution)
+            next_sol = Solution(self.data,state=next_state)
+            acc_state = self.solution.get_accuracy(state)
+            acc_new_state = self.solution.get_accuracy(next_state)
 
             if (acc_state < acc_new_state):
-                self.reward = acc_new_state
+                reward = acc_new_state
             elif (acc_state > acc_new_state):
-                self.reward = acc_new_state - acc_state
+                reward = acc_new_state - acc_state
             else :
                 if (self.data.nbrUn(state) > self.data.nbrUn(next_state) ):
-                    self.reward = 0.5 * acc_new_state
+                    reward = 0.5 * acc_new_state
                 else :
-                    self.reward = -0.5 * acc_new_state
+                    reward = -0.5 * acc_new_state
 
-            self.fitness = self.data.ql.get_q_value(self.data,state,action)
-            self.data.ql.learn(self.data,state,action,self.reward,next_state)
-            self.solution = next_state.copy()
+            self.fitness = self.data.ql.get_q_value(self.data,self.solution,action)
+            self.reward = self.solution.get_accuracy(next_state)
+            self.data.ql.learn(self.data,self.solution,action,reward,next_sol)
+            self.solution = next_sol
         
        
     def setSolution(self,solution):
-        self.solution=solution.copy()
-        self.fitness=self.data.evaluate(solution)
+        self.solution.set_state(solution)
+        if (self.data.typeOfAlgo == 0) :
+            self.fitness = self.solution.get_accuracy(solution)
+        elif (self.data.typeOfAlgo == 1):
+            self.reward = self.solution.get_accuracy(solution)
     
+    @classmethod
     def Rand(self,num): 
         res = [] 
         res = np.random.choice([0,1],size=(num,),p=[2./10,8./10]).tolist()
-  
         return res

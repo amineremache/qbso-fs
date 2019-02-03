@@ -5,13 +5,14 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 
 class FsProblem :
-    def __init__(self,data,qlearn):
+    def __init__(self,typeOfAlgo,data,qlearn):
         self.data=data
         self.nb_attribs= len(self.data.columns)-1 
         self.outPuts=self.data.iloc[:,self.nb_attribs]
         self.ql = qlearn
         self.nb_actions = len(self.ql.actions)
         self.classifier = KNeighborsClassifier(n_neighbors=1)
+        self.typeOfAlgo = typeOfAlgo
 
     def evaluate2(self,solution):
         list=[i for i, n in enumerate(solution) if n == 1]

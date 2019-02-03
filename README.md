@@ -6,3 +6,5 @@ If you want to try it, all you have to do is create a virtual enviornment using 
 <code>pip install -r requirements.txt</code>
 
 Please, if you have any comments or suggestions, don't hesitate to contact me at : <ea_remache@esi.dz>
+
+Or a second option is to use the notebook in Colab.

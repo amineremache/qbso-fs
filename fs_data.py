@@ -7,14 +7,15 @@ import xlsxwriter
 
 class FSData():
 
-    def __init__(self,location,nbr_exec):
+    def __init__(self,typeOfAlgo,location,nbr_exec):
         
+        self.typeOfAlgo = typeOfAlgo
         self.location = location
         self.nb_exec = nbr_exec
         self.dataset_name = re.search('[A-Za-z\-]*.csv',self.location)[0].split('.')[0]
         self.df = pd.read_csv(self.location,header=None)
         self.ql = QLearning(len(self.df.columns),self.attributs_to_flip(len(self.df.columns)-1))
-        self.fsd = FsProblem(self.df,self.ql)
+        self.fsd = FsProblem(self.typeOfAlgo,self.df,self.ql)
         
         self.classifier_name = str(type(self.fsd.classifier)).strip('< > \' class ').split('.')[3]
         path = './results/'+ self.dataset_name
@@ -47,16 +48,16 @@ class FSData():
 
         return list(range(9))
     
-    def run(self,typeOfAlgo,flip,maxChance,nbrBees,maxIterations,locIterations):
+    def run(self,flip,maxChance,nbrBees,maxIterations,locIterations):
         t_init = time.time()
         
         for itr in range(1,self.nb_exec+1):
           print ("Execution {0}".format(str(itr)))
           self.ql = QLearning(len(self.df.columns),self.attributs_to_flip(len(self.df.columns)-1))
-          self.fsd = FsProblem(self.df,self.ql)
+          self.fsd = FsProblem(self.typeOfAlgo,self.df,self.ql)
           swarm = Swarm(self.fsd,flip,maxChance,nbrBees,maxIterations,locIterations)
           t1 = time.time()
-          best = swarm.bso(typeOfAlgo)
+          best = swarm.bso(self.typeOfAlgo)
           t2 = time.time()
           print("Time elapsed for execution {0} : {1:.2f} s\n".format(itr,t2-t1))
           self.worksheet.write(itr, 0, itr)
