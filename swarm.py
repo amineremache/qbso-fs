@@ -1,7 +1,6 @@
 from bee import Bee
 import random
 
-
 class Swarm :
     def __init__(self,problem,flip,maxChance,nbrBees,maxIterations,locIterations):
         self.data=problem

@@ -1,6 +1,5 @@
 from fs_data import FSData
 from packages.stream import stream_tee
-import sys, time
 
 if __name__=="__main__":
 

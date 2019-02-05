@@ -1,5 +1,4 @@
 import numpy as np
-from collections import defaultdict
 
 class QLearning:
     def __init__(self,nb_atts,actions):
@@ -7,7 +6,7 @@ class QLearning:
         self.alpha = 0.1 # Facteur d'apprentissage
         self.gamma = 0.9
         self.epsilon = 0.1
-        self.q_table = [ {} for i in range(nb_atts) ] #defaultdict(lambda : [0.0,0.0,0.0,0.0])
+        self.q_table = [ {} for i in range(nb_atts) ] 
 
     def get_max_value(self,data,solution,actions_vals):
         max_val = 0.0
@@ -44,23 +43,19 @@ class QLearning:
 
                 ac_state_q_val = self.get_q_value(data,solution,ac)
                 if ( ac_state_q_val >= self.get_max_value(data,solution,action_values)[0] ):
-                    #print("Q-value for action :" + str(ac) + " is " + str(ac_state_q_val))
                     argmax_actions.append(ac)
 
-            #print("This is argmax list : ",argmax_actions)
+
             if len(argmax_actions) != 0:
               next_action = np.random.choice(argmax_actions) 
             else:
               next_action = np.random.choice(action_values) 
             next_state = self.get_next_state(solution,next_action)
-            #print("The next state is :",next_state)
-            
-            #reward = data.evaluate(next_state)
+
         else :
             next_action = np.random.choice(self.actions)
             next_state = self.get_next_state(solution,next_action)
-            
-            #reward = reward = data.evaluate(next_state)
+
             
         if self.epsilon > 0 :
             self.epsilon -= 0.0001 

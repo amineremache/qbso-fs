@@ -1,7 +1,7 @@
 from swarm import Swarm
 from fs_problem import FsProblem
 import pandas as pd
-import os, glob, re, time, sys
+import os, re, time, sys
 from rl import QLearning
 import xlsxwriter
 
@@ -19,7 +19,7 @@ class FSData():
         
         self.classifier_name = str(type(self.fsd.classifier)).strip('< > \' class ').split('.')[3]
         path = './results/'+ self.dataset_name
-        self.instance_name = str(time.strftime("%d-%m-%Y_%H-%M_", time.localtime()) + self.dataset_name + '_' + self.classifier_name)
+        self.instance_name = str(time.strftime("%m-%d-%Y_%H-%M_", time.localtime()) + self.dataset_name + '_' + self.classifier_name)
         log_filename = str(path + '/logs/'+ self.instance_name)
         
         log_file = open(log_filename + '.txt','w+')
