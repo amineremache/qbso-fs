@@ -1,5 +1,4 @@
 from fs_data import FSData
-from packages.stream import stream_tee
 
 if __name__=="__main__":
 
@@ -17,8 +16,8 @@ if __name__=="__main__":
     flip = 5
     maxChance = 3
     nbrBees = 10
-    maxIterations = 10
-    locIterations = 10
+    maxIterations = 4
+    locIterations = 2
 
     instance = FSData(typeOfAlgo,location,nbr_exec)
     instance.run(flip,maxChance,nbrBees,maxIterations,locIterations)

@@ -1,5 +1,6 @@
 from bee import Bee
-import random
+import random, time
+from solution import Solution
 
 class Swarm :
     def __init__(self,problem,flip,maxChance,nbrBees,maxIterations,locIterations):
@@ -14,6 +15,7 @@ class Swarm :
         self.refSolution = Bee(-1,self.data,self.locIterations,Bee.Rand(self.data.nb_attribs))
         self.bestSolution = self.refSolution
         self.tabou=[]
+        Solution.solutions.clear()
 
     def searchArea(self):    
         i=0
@@ -61,50 +63,30 @@ class Swarm :
             if (len(lista)== 0):
                 bee.setSolution(Bee.Rand(self.data.nb_attribs))
                 
-    def selectRefSol(self,typeOfAlgo):
-      typeOfAlgo = typeOfAlgo
-      if (typeOfAlgo == 0):
-        self.beeList.sort(key=lambda Bee: Bee.fitness, reverse=True)
-        bestQuality=self.beeList[0].fitness
-        if(bestQuality>self.bestSolution.fitness):
-            self.bestSolution=self.beeList[0]
-            self.nbChance=self.maxChance
-            return self.bestSolution
-        else:
-            if(  (len(self.tabou)!=0) and  bestQuality > (self.tabou[len(self.tabou)-1].fitness)):
-                self.nbChance=self.maxChance
-                return self.bestBeeQuality(typeOfAlgo)
-            else:
-                self.nbChance-=1
-                if(self.nbChance > 0): 
-                    return self.bestBeeQuality(typeOfAlgo)
-                else :
-                    return self.bestBeeDiversity()
+    def selectRefSol(self):
+      self.beeList.sort(key=lambda Bee: Bee.fitness, reverse=True)
+      bestQuality=self.beeList[0].fitness
+      if(bestQuality>self.bestSolution.fitness):
+          self.bestSolution=self.beeList[0]
+          self.nbChance=self.maxChance
+          return self.bestSolution
+      else:
+          if(  (len(self.tabou)!=0) and  bestQuality > (self.tabou[len(self.tabou)-1].fitness)):
+              self.nbChance=self.maxChance
+              return self.bestBeeQuality()
+          else:
+              self.nbChance-=1
+              if(self.nbChance > 0): 
+                  return self.bestBeeQuality()
+              else :
+                  return self.bestBeeDiversity()
       
-      elif (typeOfAlgo == 1):
-        self.beeList.sort(key=lambda Bee: Bee.reward, reverse=True)
-        bestQuality=self.beeList[0].reward
-        if(bestQuality>self.bestSolution.reward):
-            self.bestSolution=self.beeList[0]
-            self.nbChance=self.maxChance
-            return self.bestSolution
-        else:
-            if(  (len(self.tabou)!=0) and  bestQuality > (self.tabou[len(self.tabou)-1].reward)  ):
-                self.nbChance=self.maxChance
-                return self.bestBeeQuality(typeOfAlgo)
-            else:
-                self.nbChance-=1
-                if(self.nbChance > 0): 
-                    return self.bestBeeQuality(typeOfAlgo)
-                else :
-                    return self.bestBeeDiversity()                  
-
     def distanceTabou(self,bee):
         distanceMin=self.data.nb_attribs
         for i in range(len(self.tabou)):
             cpt=0
             for j in range(self.data.nb_attribs):
-                if (bee.solution.get_state()[j] != self.tabou[i].solution.get_state()[j]) :
+                if (bee.solution.state[j] != self.tabou[i].solution.state[j]) :
                       cpt +=1
             if (cpt<=1) :
                 return 0
@@ -112,20 +94,16 @@ class Swarm :
                 distanceMin=cpt
         return distanceMin
     
-    def bestBeeQuality(self,typeOfAlgo):
+    def bestBeeQuality(self):
         distance = 0
         i=0
         pos=-1
         while(i<self.nbrBees):
-            if (typeOfAlgo == 0):
-              max_val=self.beeList[i].fitness
-            if (typeOfAlgo == 1):
-              max_val=self.beeList[i].reward  
-
-            nbUn=self.data.nbrUn(self.beeList[i].solution.get_state())
+            max_val=self.beeList[i].fitness
+            nbUn=Solution.nbrUn(self.beeList[i].solution.get_state())
             while((i<self.nbrBees) and (self.beeList[i].solution.get_accuracy(self.beeList[i].solution.get_state()) == max_val)):
                 distanceTemp=self.distanceTabou(self.beeList[i])
-                nbUnTemp = self.data.nbrUn(self.beeList[i].solution.get_state())
+                nbUnTemp = Solution.nbrUn(self.beeList[i].solution.get_state())
                 if(distanceTemp > distance) or ((distanceTemp == distance) and (nbUnTemp < nbUn)):
                     if((distanceTemp==distance) and (nbUnTemp<nbUn)):
                         print("We pick the solution with less features")
@@ -151,58 +129,44 @@ class Swarm :
             i+=1
         return self.beeList[i]
     
-    def bso(self,typeOfAlgo):
+    def bso(self,typeOfAlgo,flip):
         i=1
         while(i<=self.maxIterations):
-            #print("refSolution is : ",self.refSolution.solution)
+            t1 = time.time()
+            print("refSolution is : ", Solution.str_sol(self.refSolution.solution.get_state()))
             self.tabou.append(self.refSolution)
-            #print("Iteration N° : ",i)
+            print("BSO iteration N° : ",i)
             
             self.searchArea()
 
-            #La recherche locale
+            # The local search part
             
             for j in range(self.nbrBees):
               if (typeOfAlgo == 0):
                 self.beeList[j].localSearch()
               elif (typeOfAlgo == 1):
                 for episode in range(self.locIterations):
-                  self.beeList[j].ql_localSearch(i)
-                #print( "Q-value of bee " + str(j) + " solution is : " + str(self.beeList[j].fitness))
-            self.refSolution = self.selectRefSol(typeOfAlgo)
+                  self.beeList[j].ql_localSearch(i,flip)
+              print( "Fitness of bee " + str(j) + " is : " + str(self.beeList[j].fitness) + "\n")
+            self.refSolution = self.selectRefSol()
             i+=1
-
-        if (typeOfAlgo == 0):
-          print("[BSO parameters used]\n")
-          print("Type of algo : {0}".format(typeOfAlgo))
-          print("Flip : {0}".format(self.flip))
-          print("MaxChance : {0}".format(self.maxChance))
-          print("Nbr of Bees : {0}".format(self.nbrBees))
-          print("Nbr of Max Iterations : {0}".format(self.maxIterations))
-          print("Nbr of Loc Iterations : {0}\n".format(self.locIterations))
-          print("Best solution found : ",self.bestSolution.solution.get_state())
-          print("Number of features used : {0}".format(self.data.nbrUn(self.bestSolution.solution.get_state())))
-          print("Accuracy : {0:.2f} ".format(self.bestSolution.fitness*100))
-          return self.bestSolution.fitness*100, self.data.nbrUn(self.bestSolution.solution.get_state())
-
-        elif (typeOfAlgo == 1):
-          print("[BSO parameters used]\n")
-          print("Type of algo : {0}".format(typeOfAlgo))
-          print("Flip : {0}".format(self.flip))
-          print("MaxChance : {0}".format(self.maxChance))
-          print("Nbr of Bees : {0}".format(self.nbrBees))
-          print("Nbr of Max Iterations : {0}".format(self.maxIterations))
-          print("Nbr of Loc Iterations : {0}\n".format(self.locIterations))
-          print("Best solution found : ",self.bestSolution.solution.get_state())
-          print("Number of features used : {0}".format(self.data.nbrUn(self.bestSolution.solution.get_state())))
-          print("Accuracy : {0:.2f} ".format(self.bestSolution.reward*100))
-          print("Return (Q-value) : ",self.bestSolution.fitness)
-          
-          return self.bestSolution.reward*100, self.data.nbrUn(self.bestSolution.solution.get_state())
-
-    
-    def str_sol(self,mlist):
-        result = ''
-        for element in mlist:
-            result += str(element)
-        return result
+            t2 = time.time()
+            print("Time of iteration N°{0} : {1:.2f} s".format(i,t2-t1))
+            
+        print("\n[BSO parameters used]\n")
+        print("Type of algo : {0}".format(typeOfAlgo))
+        print("Flip : {0}".format(self.flip))
+        print("MaxChance : {0}".format(self.maxChance))
+        print("Nbr of Bees : {0}".format(self.nbrBees))
+        print("Nbr of Max Iterations : {0}".format(self.maxIterations))
+        print("Nbr of Loc Iterations : {0}\n".format(self.locIterations))
+        print("Best solution found : ",self.bestSolution.solution.get_state())
+        print("Accuracy of found sol : {0:.2f} ".format(self.bestSolution.fitness*100))
+        print("Number of features used : {0}".format(Solution.nbrUn(self.bestSolution.solution.get_state())))
+        print("Size of solutions dict : {0}".format(len(Solution.solutions)))
+        print("Average time to evaluate a solution : {0:.3f} s".format(Solution.get_avg_time())) 
+        print("Global optimum : {0}, {1:.2f}".format(Solution.get_best_sol()[0],Solution.get_best_sol()[1]*100))
+        if (typeOfAlgo == 1):
+          print("Return (Q-value) : ",self.bestSolution.rl_return)  
+          print("Total sorting time : {0:.2f} s".format(Solution.sorting_time))
+        return self.bestSolution.fitness*100, Solution.nbrUn(self.bestSolution.solution.get_state())

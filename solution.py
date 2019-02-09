@@ -1,37 +1,90 @@
+import copy, time, operator
+
 class Solution:
 
     solutions = {} 
+    tot_eval_time = 0
+    sorting_time = 0
 
-    def __init__(self,data,state,accuracy=0):
+    def __init__(self,data,state):
         self.data = data
-        self.accuracy = accuracy
         self.state = state
-        self.solutions[self.str_sol(self.state)] = self 
+        self.accuracy = 0
+        self.solutions[Solution.str_sol(self.state)] = self.accuracy
 
     def get_accuracy(self,state):
-        if (self.str_sol(state) in self.solutions):
-            if (self.solutions[self.str_sol(state)].accuracy == 0) :
-                self.solutions[self.str_sol(state)].set_accuracy(state)
-        else :
-            self.solutions[self.str_sol(state)] = Solution(self.data,state=state)
-            self.solutions[self.str_sol(state)].set_accuracy(state)
+        if (Solution.str_sol(state) in Solution.solutions):
+            if (Solution.solutions[Solution.str_sol(state)] == 0) :
+                self.set_accuracy(state)
+        else:
+          self.set_accuracy(state)
 
-        return self.solutions[self.str_sol(state)].accuracy
+        return Solution.solutions[Solution.str_sol(state)]
 
     def get_state(self):
-        return self.state.copy()
+        return copy.deepcopy(self.state)
 
-    def set_accuracy(self,state):
-        self.solutions[self.str_sol(state)].accuracy = self.data.evaluate(state)       
+    def set_accuracy(self,state): 
+        t1 = time.time()
+        Solution.solutions[Solution.str_sol(state)] = self.data.evaluate(state)
+        self.accuracy = Solution.solutions[Solution.str_sol(state)]
+        t2 = time.time()
+        Solution.tot_eval_time += t2-t1
     
-    def set_state(self,state):
-        if (self.str_sol(state) in self.solutions): 
-            self.solutions[self.str_sol(state)].state = state.copy()
-        else :
-            self.solutions[self.str_sol(state)] = Solution(self.data,state=state)
+    def set_state(self,state): 
+        self.state = copy.deepcopy(state)
+            
+    @staticmethod
+    def get_best_sol():
+        t1 = time.time()
+        sorted_sols = sorted(Solution.solutions.items(), key=operator.itemgetter(1), reverse=True)
+        t2 = time.time()
+        #print("Best sol after sort : {0}".format(sorted_sols[0][1]))
+        Solution.sorting_time += t2-t1
+        return sorted_sols[0][0] ,sorted_sols[0][1]
 
-    def str_sol(self,mlist):
+      
+    @staticmethod
+    def get_indexes(mlist):
+        ilist = []
+        for i in range(len(mlist)):
+          if mlist[i] == 1:
+            ilist.append(i)
+        return ilist
+      
+    @staticmethod
+    def str_sol(mlist):
         result = ''
         for element in mlist:
             result += str(element)
         return result
+
+    @staticmethod
+    def list_sol(key):
+        mlist = [ int(i) for i in key ]
+        return mlist
+      
+    @staticmethod
+    def nbrUn(state):
+        return len([i for i, n in enumerate(state) if n == 1])
+    
+    @staticmethod
+    def attributs_to_flip(nb_att):
+        return list(range(nb_att))
+    
+    @staticmethod
+    def xor(x, y):
+        return '{1:0{0}b}'.format(len(x), int(Solution.str_sol(x), 2) ^ int(Solution.str_sol(y), 2))
+    
+    @staticmethod
+    def get_avg_time():
+        return Solution.tot_eval_time/len(Solution.solutions)
+
+    @staticmethod
+    def sol_to_list(solution):
+        sol_list=[i for i, n in enumerate(solution) if n == 1]
+        return sol_list
+
+    @staticmethod
+    def attributs_to_flip(nb_att):
+        return list(range(nb_att))
