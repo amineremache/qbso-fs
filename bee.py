@@ -27,8 +27,8 @@ class Bee :
                     if ((len(lista)==1) and (indice==i) and (i < self.data.nb_attribs-1)):
                         i+=1
                     self.solution.state[i]= (self.solution.state[i] + 1) % 2
-                    
                     quality = self.solution.get_accuracy(self.solution.get_state())
+                    
                     if (quality > best):
                         pos = i
                         best = quality
@@ -53,9 +53,9 @@ class Bee :
     def ql_localSearch(self,maxIterIndex,flip):
       
         """The reason why we do this is to 
-        tune the exploitation/exploration trade-off """
-        iterations = round(maxIterIndex/self.locIterations) +1 
-        #iterations = 2*self.locIterations
+        explore at the beginning and 
+        eploit at the end to converge to the optimal solution"""
+        iterations = int(maxIterIndex/self.locIterations)+1 if int(maxIterIndex/self.locIterations)+1 <= self.locIterations else self.locIterations
         for itr in range(iterations):
        
           state = self.solution.get_state()
@@ -93,7 +93,7 @@ class Bee :
           self.rl_return = self.data.ql.get_q_value(self.solution,action)
           self.fitness = acc_new_state
           self.solution = next_sol
-          print("Next state's acc : ",acc_new_state)
+          #print("Next state's acc : ",acc_new_state)
           #print("This is acc choosed : {0}".format(acc_new_state))
             
     def setSolution(self,solution):

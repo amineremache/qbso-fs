@@ -12,12 +12,12 @@ if __name__=="__main__":
     # Params init
 
     typeOfAlgo = 0
-    nbr_exec = 1
+    nbr_exec = 5
     flip = 5
     maxChance = 3
     nbrBees = 10
-    maxIterations = 4
-    locIterations = 2
+    maxIterations = 10
+    locIterations = 10
 
     instance = FSData(typeOfAlgo,location,nbr_exec)
     instance.run(flip,maxChance,nbrBees,maxIterations,locIterations)

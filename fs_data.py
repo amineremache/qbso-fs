@@ -18,12 +18,12 @@ class FSData():
         self.ql = QLearning(len(self.df.columns),Solution.attributs_to_flip(len(self.df.columns)-1))
         self.fsd = FsProblem(self.typeOfAlgo,self.df,self.ql)
         
-        self.classifier_name = str(type(self.fsd.classifier)).strip('< > \' class ').split('.')[3]
-        path = './results/'+ self.dataset_name
+        self.classifier_name = str(type(self.fsd.classifier)).strip('< > \' class ').split('.')[3]]
+        path = "./results/" + self.dataset_name
         if not os.path.exists(path):
           os.makedirs(path + '/logs/')
           os.makedirs(path + '/sheets/')
-        self.instance_name = str(self.typeOfAlgo) + '-' + str(time.strftime("%m-%d-%Y_%H-%M-%S_", time.localtime()) + self.classifier_name)
+        self.instance_name = str(self.typeOfAlgo) + '-' + self.dataset_name + '_' +  str(time.strftime("%m-%d-%Y_%H-%M-%S_", time.localtime()) + self.classifier_name)
         log_filename = str(path + '/logs/'+ self.instance_name)
         if not os.path.exists(path):
           os.makedirs(path)
@@ -32,10 +32,10 @@ class FSData():
         
         print("[START] Dataset " + self.dataset_name + " description \n")
         print("Shape : " + str(self.df.shape) + "\n")
-        #print(self.df.describe())
+        print(self.df.describe())
         print("\n[END] Dataset " + self.dataset_name + " description\n")
         print("[START] Ressources specifications\n")
-        #!cat /proc/cpuinfo # Think of changing this when using Windows
+        os.exec('cat /proc/cpuinfo') # Think of changing this when using Windows
         print("[END] Ressources specifications\n")
 
         
@@ -43,10 +43,12 @@ class FSData():
         self.workbook = xlsxwriter.Workbook(sheet_filename + '.xlsx')
         
         self.worksheet = self.workbook.add_worksheet(self.classifier_name)
-        self.worksheet.write(0,0,'Iteration')
-        self.worksheet.write(0,1,'Accuracy')
-        self.worksheet.write(0,2,'N_Features')
-        self.worksheet.write(0,3,'Time')
+        self.worksheet.write(0,0,"Iteration")
+        self.worksheet.write(0,1,"Accuracy")
+        self.worksheet.write(0,2,"N_Features")
+        self.worksheet.write(0,3,"Time")
+        self.worksheet.write(0,4,"Top_10%_features")
+        self.worksheet.write(0,5,"Size_sol_space")
     
     def run(self,flip,maxChance,nbrBees,maxIterations,locIterations):
         total_time = 0
@@ -64,6 +66,8 @@ class FSData():
           self.worksheet.write(itr, 1, "{0:.2f}".format(best[0]))
           self.worksheet.write(itr, 2, best[1])
           self.worksheet.write(itr, 3, "{0:.3f}".format(t2-t1))
+          self.worksheet.write(itr, 4, "{0}".format(str([j[0] for j in [i for i in swarm.best_features()]])))
+          self.worksheet.write(itr, 5, len(Solution.solutions))
           
         print ("Total execution time of {0} executions \nfor dataset \"{1}\" is {2:.2f} s".format(self.nb_exec,self.dataset_name,total_time))
         self.workbook.close()

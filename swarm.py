@@ -1,5 +1,5 @@
 from bee import Bee
-import random, time
+import random, time, operator
 from solution import Solution
 
 class Swarm :
@@ -15,6 +15,7 @@ class Swarm :
         self.refSolution = Bee(-1,self.data,self.locIterations,Bee.Rand(self.data.nb_attribs))
         self.bestSolution = self.refSolution
         self.tabou=[]
+        self.feature_count = { i:0 for i in range(self.data.nb_attribs) }
         Solution.solutions.clear()
 
     def searchArea(self):    
@@ -86,7 +87,7 @@ class Swarm :
         for i in range(len(self.tabou)):
             cpt=0
             for j in range(self.data.nb_attribs):
-                if (bee.solution.state[j] != self.tabou[i].solution.state[j]) :
+                if (bee.solution.get_state()[j] != self.tabou[i].solution.get_state()[j]) :
                       cpt +=1
             if (cpt<=1) :
                 return 0
@@ -95,6 +96,7 @@ class Swarm :
         return distanceMin
     
     def bestBeeQuality(self):
+        
         distance = 0
         i=0
         pos=-1
@@ -133,7 +135,7 @@ class Swarm :
         i=1
         while(i<=self.maxIterations):
             t1 = time.time()
-            print("refSolution is : ", Solution.str_sol(self.refSolution.solution.get_state()))
+            #print("\nrefSolution is : ", Solution.str_sol(self.refSolution.solution.get_state()))
             self.tabou.append(self.refSolution)
             print("BSO iteration N° : ",i)
             
@@ -147,11 +149,12 @@ class Swarm :
               elif (typeOfAlgo == 1):
                 for episode in range(self.locIterations):
                   self.beeList[j].ql_localSearch(i,flip)
+              self.count_features(self.beeList[j].solution.get_state())
               print( "Fitness of bee " + str(j) + " is : " + str(self.beeList[j].fitness) + "\n")
             self.refSolution = self.selectRefSol()
-            i+=1
             t2 = time.time()
-            print("Time of iteration N°{0} : {1:.2f} s".format(i,t2-t1))
+            print("Time of iteration N°{0} : {1:.2f} s\n".format(i,t2-t1))
+            i+=1
             
         print("\n[BSO parameters used]\n")
         print("Type of algo : {0}".format(typeOfAlgo))
@@ -160,6 +163,7 @@ class Swarm :
         print("Nbr of Bees : {0}".format(self.nbrBees))
         print("Nbr of Max Iterations : {0}".format(self.maxIterations))
         print("Nbr of Loc Iterations : {0}\n".format(self.locIterations))
+        print("Must 10% used features : ",self.best_features())
         print("Best solution found : ",self.bestSolution.solution.get_state())
         print("Accuracy of found sol : {0:.2f} ".format(self.bestSolution.fitness*100))
         print("Number of features used : {0}".format(Solution.nbrUn(self.bestSolution.solution.get_state())))
@@ -168,5 +172,15 @@ class Swarm :
         print("Global optimum : {0}, {1:.2f}".format(Solution.get_best_sol()[0],Solution.get_best_sol()[1]*100))
         if (typeOfAlgo == 1):
           print("Return (Q-value) : ",self.bestSolution.rl_return)  
-          print("Total sorting time : {0:.2f} s".format(Solution.sorting_time))
+          #print("Total sorting time : {0:.2f} s".format(Solution.sorting_time))
         return self.bestSolution.fitness*100, Solution.nbrUn(self.bestSolution.solution.get_state())
+      
+      
+    def count_features(self,solution):
+        self.feature_count = {i:self.feature_count[i]+n for i, n in enumerate(solution)}
+
+    def best_features(self):
+        sorted_features = sorted(self.feature_count.items(), key=operator.itemgetter(1), reverse=True)
+        top_10 = round(0.1*self.data.nb_attribs)+1
+        best_features = sorted_features[:top_10]
+        return best_features

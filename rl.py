@@ -56,7 +56,7 @@ class QLearning:
             max_val = self.get_max_q_value(solution,action_values)[0] # getting the max next q_value
             argmax_actions=[self.get_max_q_value(solution,action_values)[1]] # saving the action that maxmizes the reward
 
-            # There may be actions that has the same reward, so we add them to the argmax_avtions
+            # There may be actions that have the same reward, so we add them to the argmax_avtions
             for ac in action_values : 
               ac_state = self.get_next_state(solution,ac)
               ac_state_q_val = self.get_q_value(solution,ac) + solution.get_accuracy(ac_state)

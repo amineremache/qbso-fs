@@ -45,4 +45,3 @@ class FsProblem :
         results = cross_val_score(self.classifier, X, Y, cv=cv,scoring='accuracy')
         #print("\n[Cross validation results]\n{0}".format(results))
         return results.mean()
-
