@@ -46,9 +46,12 @@ class Solution:
         #print("Best sol after sort : {0}".format(sorted_sols[0][1]))
         Solution.sorting_time += t2-t1
         return sorted_sols[0][0] ,sorted_sols[0][1]"""
-        
-        best_state = Solution.best_sol.get_state()
-        best_accuracy = Solution.best_sol.get_accuracy(best_state)
+        if Solution.best_sol == None :
+          best_state = Solution.str_sol(list(Solution.solutions.items())[0][0])
+          best_accuracy = list(Solution.solutions.items())[0][1]
+        else:
+          best_state = Solution.best_sol.get_state()
+          best_accuracy = Solution.best_sol.get_accuracy(best_state)
         return Solution.str_sol(best_state), best_accuracy
 
       
@@ -69,9 +72,9 @@ class Solution:
     
     @staticmethod
     def sol_to_list(solution):
-      sol_list=[i for i, n in enumerate(solution) if n == 1]
-      return sol_list
-    
+        sol_list=[i for i, n in enumerate(solution) if n == 1]
+        return sol_list
+
     @staticmethod
     def list_sol(key):
         mlist = [ int(i) for i in key ]
@@ -91,4 +94,4 @@ class Solution:
     
     @staticmethod
     def get_avg_time():
-      return Solution.tot_eval_time/len(Solution.solutions)
+        return Solution.tot_eval_time/len(Solution.solutions)

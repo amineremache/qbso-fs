@@ -11,8 +11,8 @@ if __name__=="__main__":
 
     # Params init
 
-    typeOfAlgo = 0
-    nbr_exec = 5
+    typeOfAlgo = 1
+    nbr_exec = 1
     flip = 5
     maxChance = 3
     nbrBees = 10
