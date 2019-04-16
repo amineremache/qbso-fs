@@ -2,22 +2,32 @@ from fs_data import FSData
 
 if __name__=="__main__":
 
-    # Prepare the dataset
+    # RL 
 
-    dataset = "Glass"
-    #data_loc_path = "https://raw.githubusercontent.com/Neofly4023/bso-fs/master/datasets/"
-    data_loc_path = "./datasets/"
-    location = data_loc_path + dataset + ".csv"
+    alhpa = 0.1
+    gamma = 0.99
+    epsilon = 0.01
 
-    # Params init
+    # BSO
 
-    typeOfAlgo = 1
-    nbr_exec = 1
     flip = 5
     maxChance = 3
     nbrBees = 10
     maxIterations = 10
     locIterations = 10
 
-    instance = FSData(typeOfAlgo,location,nbr_exec)
+    # Test type
+
+    typeOfAlgo = 1
+    nbr_exec = 1
+    dataset = "Glass"
+    data_loc_path = "./datasets/"
+    location = data_loc_path + dataset + ".csv"
+    method = "qbso_simple"
+    test_param = "rl"
+    param = "gamma"
+    val = str(locals()[param])
+    classifier = "knn"
+
+    instance = FSData(typeOfAlgo,location,nbr_exec,method,test_param,param,val,classifier,alhpa,gamma,epsilon)
     instance.run(flip,maxChance,nbrBees,maxIterations,locIterations)

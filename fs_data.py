@@ -8,22 +8,22 @@ import xlsxwriter
 
 class FSData():
 
-    def __init__(self,typeOfAlgo,location,nbr_exec):
-        
+    def __init__(self,typeOfAlgo,location,nbr_exec, method, test_param, param, val, classifier, alpha=None,gamma=None,epsilon=None):
+
         self.typeOfAlgo = typeOfAlgo
         self.location = location
         self.nb_exec = nbr_exec
         self.dataset_name = re.search('[A-Za-z\-]*.csv',self.location)[0].split('.')[0]
         self.df = pd.read_csv(self.location,header=None)
-        self.ql = QLearning(len(self.df.columns),Solution.attributs_to_flip(len(self.df.columns)-1))
+        self.ql = QLearning(len(self.df.columns),Solution.attributs_to_flip(len(self.df.columns)-1),alpha,gamma,epsilon)
         self.fsd = FsProblem(self.typeOfAlgo,self.df,self.ql)
         
-        self.classifier_name = str(type(self.fsd.classifier)).strip('< > \' class ').split('.')[3]]
-        path = "./results/" + self.dataset_name
+        self.classifier_name = str(type(self.fsd.classifier)).strip('< > \' class ').split('.')[3]
+        path = './results/parameters/'+method+'/'+test_param+'/'+param+'/'+val+'/'+classifier+'/'+ self.dataset_name
         if not os.path.exists(path):
           os.makedirs(path + '/logs/')
           os.makedirs(path + '/sheets/')
-        self.instance_name = str(self.typeOfAlgo) + '-' + self.dataset_name + '_' +  str(time.strftime("%m-%d-%Y_%H-%M-%S_", time.localtime()) + self.classifier_name)
+        self.instance_name = self.dataset_name + '_' +  str(time.strftime("%m-%d-%Y_%H-%M-%S_", time.localtime()) + self.classifier_name)
         log_filename = str(path + '/logs/'+ self.instance_name)
         if not os.path.exists(path):
           os.makedirs(path)
@@ -35,7 +35,7 @@ class FSData():
         print(self.df.describe())
         print("\n[END] Dataset " + self.dataset_name + " description\n")
         print("[START] Ressources specifications\n")
-        os.exec('cat /proc/cpuinfo') # Think of changing this when using Windows
+        #os.exec('cat /proc/cpuinfo') # Think of changing this when switching between Windows & Linux
         print("[END] Ressources specifications\n")
 
         

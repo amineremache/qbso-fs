@@ -2,11 +2,11 @@ import numpy as np
 from solution import Solution
 
 class QLearning:
-    def __init__(self,nb_atts,actions):
+    def __init__(self,nb_atts,actions,alpha=0.1,gamma=0.9,epsilon=0.1):
         self.actions = actions
-        self.alpha = 0.1
-        self.gamma = 0.9
-        self.epsilon = 0.1
+        self.alpha = alpha
+        self.gamma = gamma
+        self.epsilon = epsilon
         self.q_table = [ {} for i in range(nb_atts) ] 
 
     def get_max_q_value(self,solution,actions_vals):
