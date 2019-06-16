@@ -11,8 +11,8 @@ if __name__=="__main__":
     # BSO
 
     flip = 5
-    maxChance = 3
-    nbrBees = 10
+    max_chance = 3
+    bees_number = 10
     maxIterations = 10
     locIterations = 10
 
@@ -20,7 +20,7 @@ if __name__=="__main__":
 
     typeOfAlgo = 1
     nbr_exec = 1
-    dataset = "Glass"
+    dataset = "Iris"
     data_loc_path = "./datasets/"
     location = data_loc_path + dataset + ".csv"
     method = "qbso_simple"
@@ -30,4 +30,4 @@ if __name__=="__main__":
     classifier = "knn"
 
     instance = FSData(typeOfAlgo,location,nbr_exec,method,test_param,param,val,classifier,alhpa,gamma,epsilon)
-    instance.run(flip,maxChance,nbrBees,maxIterations,locIterations)
+    instance.run(flip,max_chance,bees_number,maxIterations,locIterations)

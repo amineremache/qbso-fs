@@ -3,12 +3,12 @@ import random, time, operator
 from solution import Solution
 
 class Swarm :
-    def __init__(self,problem,flip,maxChance,nbrBees,maxIterations,locIterations):
+    def __init__(self,problem,flip,max_chance,bees_number,maxIterations,locIterations):
         self.data=problem
         self.flip=flip
-        self.maxChance=maxChance
-        self.nbChance=maxChance
-        self.nbrBees=nbrBees
+        self.max_chance=max_chance
+        self.nbChance=max_chance
+        self.bees_number=bees_number
         self.maxIterations=maxIterations
         self.locIterations=locIterations
         self.beeList=[]
@@ -23,7 +23,7 @@ class Swarm :
         h=0
         
         self.beeList=[]
-        while((i<self.nbrBees) and (i < self.flip) ) :
+        while((i<self.bees_number) and (i < self.flip) ) :
             #print ("First method to generate")
             
             solution=self.refSolution.solution.get_state()
@@ -38,7 +38,7 @@ class Swarm :
             h=h+1
         h=0
         
-        while((i<self.nbrBees) and (i< 2*self.flip )):
+        while((i<self.bees_number) and (i< 2*self.flip )):
             #print("Second method to generate")
 
             solution=self.refSolution.solution.get_state()
@@ -51,7 +51,7 @@ class Swarm :
             
             i+=1
             h=h+1
-        while (i<self.nbrBees):
+        while (i<self.bees_number):
             #print("Random method to generate")
             solution= self.refSolution.solution.get_state()
             indice = random.randint(0,len(solution)-1)
@@ -69,11 +69,11 @@ class Swarm :
       bestQuality=self.beeList[0].fitness
       if(bestQuality>self.bestSolution.fitness):
           self.bestSolution=self.beeList[0]
-          self.nbChance=self.maxChance
+          self.nbChance=self.max_chance
           return self.bestSolution
       else:
           if(  (len(self.tabou)!=0) and  bestQuality > (self.tabou[len(self.tabou)-1].fitness)):
-              self.nbChance=self.maxChance
+              self.nbChance=self.max_chance
               return self.bestBeeQuality()
           else:
               self.nbChance-=1
@@ -100,10 +100,10 @@ class Swarm :
         distance = 0
         i=0
         pos=-1
-        while(i<self.nbrBees):
+        while(i<self.bees_number):
             max_val=self.beeList[i].fitness
             nbUn=Solution.nbrUn(self.beeList[i].solution.get_state())
-            while((i<self.nbrBees) and (self.beeList[i].solution.get_accuracy(self.beeList[i].solution.get_state()) == max_val)):
+            while((i<self.bees_number) and (self.beeList[i].solution.get_accuracy(self.beeList[i].solution.get_state()) == max_val)):
                 distanceTemp=self.distanceTabou(self.beeList[i])
                 nbUnTemp = Solution.nbrUn(self.beeList[i].solution.get_state())
                 if(distanceTemp > distance) or ((distanceTemp == distance) and (nbUnTemp < nbUn)):
@@ -143,7 +143,7 @@ class Swarm :
 
             # The local search part
             
-            for j in range(self.nbrBees):
+            for j in range(self.bees_number):
               if (typeOfAlgo == 0):
                 self.beeList[j].localSearch()
               elif (typeOfAlgo == 1):
@@ -155,12 +155,12 @@ class Swarm :
             t2 = time.time()
             print("Time of iteration N°{0} : {1:.2f} s\n".format(i,t2-t1))
             i+=1
-            
+        print("\nQ-Tab : {0}\n".format(self.data.ql.q_table))    
         print("\n[BSO parameters used]\n")
         print("Type of algo : {0}".format(typeOfAlgo))
         print("Flip : {0}".format(self.flip))
-        print("MaxChance : {0}".format(self.maxChance))
-        print("Nbr of Bees : {0}".format(self.nbrBees))
+        print("MaxChance : {0}".format(self.max_chance))
+        print("Nbr of Bees : {0}".format(self.bees_number))
         print("Nbr of Max Iterations : {0}".format(self.maxIterations))
         print("Nbr of Loc Iterations : {0}\n".format(self.locIterations))
         print("Must 10% used features : ",self.best_features())

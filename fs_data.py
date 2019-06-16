@@ -50,13 +50,13 @@ class FSData():
         self.worksheet.write(0,4,"Top_10%_features")
         self.worksheet.write(0,5,"Size_sol_space")
     
-    def run(self,flip,maxChance,nbrBees,maxIterations,locIterations):
+    def run(self,flip,max_chance,bees_number,maxIterations,locIterations):
         total_time = 0
         
         for itr in range(1,self.nb_exec+1):
           print ("Execution {0}".format(str(itr)))
           self.fsd = FsProblem(self.typeOfAlgo,self.df,self.ql)
-          swarm = Swarm(self.fsd,flip,maxChance,nbrBees,maxIterations,locIterations)
+          swarm = Swarm(self.fsd,flip,max_chance,bees_number,maxIterations,locIterations)
           t1 = time.time()
           best = swarm.bso(self.typeOfAlgo,flip)
           t2 = time.time()
