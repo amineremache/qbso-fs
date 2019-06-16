@@ -13,3 +13,4 @@ I'd like to thank my partner [Mehdi KARECH](https://www.linkedin.com/in/mehdi-ka
 For more information, please look at our [thesis](https://github.com/Neofly4023/bso-fs/blob/master/thesis/engineering_grad_thesis.pdf) (in French).
 
 Please, if you have any comments or suggestions, don't hesitate to contact us at : <ea_remache@esi.dz>, <em_karech@esi.dz>
+You can also contribute [here](https://github.com/Neofly4023/qbso-fs/blob/master/CONTRIBUTING.md)
