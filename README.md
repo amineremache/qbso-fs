@@ -8,7 +8,7 @@ If you want to try it in your local machine, all you have to do is create a virt
 
 Or you could rune one of the [notebooks](https://github.com/Neofly4023/bso-fs/tree/master/notebooks) in a Jupyter environement like [Colab](https://colab.research.google.com).
 
-I'd like to thank my partner [Mehdi KARECH](https://www.linkedin.com/in/mehdi-karech/) for his contribution.
+I'd like to thank my partner [Mehdi KARECH](https://github.com/Mehdikarech1697) for his contribution.
 
 For more information, please look at our [thesis](https://github.com/Neofly4023/bso-fs/blob/master/thesis/engineering_grad_thesis.pdf) (in French).
 
