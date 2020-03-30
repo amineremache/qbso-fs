@@ -1,16 +1,42 @@
 # QBSO-FS : a Reinforcement Learning based Bee Swarm Optimization metaheuristic for Feature Selection
 
-The first version of this project was a python translation for an original JAVA project of Bee Swarm Optimization (BSO) algorithm used in Feature Selection (FS), then we improved it by optimizing a lot of aspects, then we added a class for reinforcement learning algorithms, which is the main work of this project. 
+This is the official Python implementation of the paper:
 
-If you want to try it in your local machine, all you have to do is create a virtual enviornment using virtualenv or virtualenv-wrapper or anaconda ( for the lazy ones ) with a <b>python 3.6+</b> version, and install the packages in the <b>requirements.txt</b> file using :
+*QBSO-FS : a Reinforcement Learning based Bee Swarm Optimization metaheuristic for Feature Selection* <https://doi.org/10.1007/978-3-030-20518-8_65>
 
-<code>pip install -r requirements.txt</code>
+by Sadeg et al. (IWANN2019)
 
-Or you could rune one of the [notebooks](https://github.com/Neofly4023/bso-fs/tree/master/notebooks) in a Jupyter environement like [Colab](https://colab.research.google.com).
+<img src="./media/comparaison.png" >
 
-I'd like to thank my partner [Mehdi KARECH](https://github.com/Mehdikarech1697) for his contribution.
+## Requirements 
 
-For more information, please look at our [thesis](https://github.com/Neofly4023/bso-fs/blob/master/thesis/engineering_grad_thesis.pdf) (in French).
+*1.* Download current version of the repository. ( Or refer to point 3 if you want to use a Jupyter Notebook )<br>
 
-Please, if you have any comments or suggestions, don't hesitate to contact us at : <ea_remache@esi.dz>, <em_karech@esi.dz>
-You can also contribute [here](https://github.com/Neofly4023/qbso-fs/blob/master/CONTRIBUTING.md)
+```
+git clone https://github.com/amineremache/qbso-fs.git
+```
+
+*2.* Install the dependencies in the `requirements.txt` file.<br>
+```
+pip install -r requirements.txt
+``` 
+
+or 
+
+```
+pip install numpy scikit-learn pandas xlsxwriter
+```
+
+*3.* If you don't want to use the code locally, or you want to run it from a notebook, you can run one of the notebooks present at `./notebooks/`.<br>
+
+
+The code was tested on Ubuntu 16 and 18, Windows 10 with Python 3.6 and 3.7.
+
+## Running the code
+
+To run the code, just go to `main.py`. For now, only KNN is implemented, but you can add your own classifier in `fs_problem.py` file.
+
+# Citation
+
+If you use this work, please cite:<br/>
+*QBSO-FS: A Reinforcement Learning Based Bee Swarm Optimization Metaheuristic for Feature Selection*, Sadeg S., Hamdad L., Remache A.R., Karech M.N., Benatchba K., Habbas Z, IWANN, 2019.
