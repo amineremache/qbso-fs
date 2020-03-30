@@ -112,7 +112,3 @@ packages/
 
 # results
 results/
-
-# GUI
-gui*
-media/
